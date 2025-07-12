@@ -1,14 +1,14 @@
 ```@meta
-CurrentModule = GeneralizedRFF
+CurrentModule = GeneralizedRFFs
 ```
 
-# GeneralizedRFF
+# GeneralizedRFFs
 
-Documentation for [GeneralizedRFF](https://github.com/shu13830/GeneralizedRFF.jl).
+Documentation for [GeneralizedRFFs](https://github.com/shu13830/GeneralizedRFFs.jl).
 
 ```@index
 ```
 
 ```@autodocs
-Modules = [GeneralizedRFF]
+Modules = [GeneralizedRFFs]
 ```
