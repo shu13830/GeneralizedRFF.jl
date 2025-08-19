@@ -3,3 +3,4 @@
 /docs/build/
 TODO.md
 notebooks/comparison.ipynb
+combined_src.jl

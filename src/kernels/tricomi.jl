@@ -11,11 +11,12 @@ struct TricomiKernel{M} <: KernelFunctions.Kernel
     β::Float64
     γ::Float64
     metric::M
-    function TricomiKernel(α::T1, β::T2, γ::T3) where {T1<:Real, T2<:Real, T3<:Real}
+    function TricomiKernel(;α::T1, β::T2, γ::T3) where {T1<:Real, T2<:Real, T3<:Real}
         0 < α <= 2 || throw(ArgumentError("α must be in (0,2] for PD"))
         0 < β || throw(ArgumentError("β must be positive"))
         0 < γ || throw(ArgumentError("γ must be positive"))
-        new{T}(Float64(α), Float64(β), Float64(γ), KernelFunctions.Euclidean())
+        metric = KernelFunctions.Euclidean()
+        new{typeof(metric)}(Float64(α), Float64(β), Float64(γ), metric)
     end
 end
 

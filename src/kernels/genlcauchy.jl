@@ -23,7 +23,8 @@ struct GeneralizedCauchyKernel{M} <: KernelFunctions.Kernel
     function GeneralizedCauchyKernel(α::T1, β::T2) where {T1<:Real, T2<:Real}
         0 < α <= 2 || throw(ArgumentError("α must be in (0,2] for PD"))
         0 < β || throw(ArgumentError("β must be positive"))
-        new{T}(Float64(α), Float64(β), KernelFunctions.Euclidean())
+        metric = KernelFunctions.Euclidean()
+        new{typeof(metric)}(Float64(α), Float64(β), metric)
     end
 end
 

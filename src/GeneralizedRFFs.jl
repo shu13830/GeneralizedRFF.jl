@@ -24,6 +24,7 @@ include("kernels/tricomi.jl")
 
 # Export public API
 export sample_generalized_rff_basis
-export GeneralizedCauchyKernel, BetaKernel, KummerKernel, TricomiKernel
+export SubbotinKernel, GeneralizedGaussianKernel, ExponentialPowerKernel, 
+    GeneralizedCauchyKernel, BetaKernel, KummerKernel, TricomiKernel
 
 end # module

@@ -15,11 +15,12 @@ struct BetaKernel{M} <: KernelFunctions.Kernel
     β::Float64    # 1st parameter of Beta distribution
     γ::Float64    # 2nd parameter of Beta distribution
     metric::M
-    function BetaKernel(α::T1, β::T2, γ::T3) where {T1<:Real, T2<:Real, T3<:Real}
+    function BetaKernel(;α::T1, β::T2, γ::T3) where {T1<:Real, T2<:Real, T3<:Real}
         0 < α <= 2 || throw(ArgumentError("α must be in (0,2] for PD"))
         0 < β || throw(ArgumentError("β must be positive"))
         0 < γ || throw(ArgumentError("γ must be positive"))
-        new{T}(Float64(α), Float64(β), Float64(γ), KernelFunctions.Euclidean())
+        metric = KernelFunctions.Euclidean()
+        new{typeof(metric)}(Float64(α), Float64(β), Float64(γ), metric)
     end
 end
 
@@ -34,7 +35,7 @@ end
 
 KernelFunctions.metric(k::BetaKernel) = k.metric
 
-function Base.show(io::IO, k::GeneralizedCauchyKernel)
+function Base.show(io::IO, k::BetaKernel)
     return print(io, "Beta Kernel (α = ", only(k.α),", β = ", only(k.β)," γ =", only(k.γ)," metric = ", k.metric, ")")
 end
 
