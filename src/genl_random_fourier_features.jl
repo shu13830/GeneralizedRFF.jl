@@ -92,9 +92,10 @@ function sample_grff_basis(
 
     # Compute proper weights for RFF
     # inner_weights scales the input (lengthscale)
-    # outer_weights scales the output (1/√M for proper normalization)
+    # outer_weights scales the output (√(2/M) for proper normalization)
+    # The factor √2 comes from cos(ωx + τ) having variance 1/2
     inner_weights = 1.0 / ℓ
-    outer_weights = 1.0 / sqrt(num_features)
+    outer_weights = sqrt(2.0 / num_features)
 
     # Create a dummy sample_params closure (not used for pre-sampled basis)
     sample_params = () -> nothing
