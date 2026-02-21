@@ -3,9 +3,9 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version to register (leave empty to use Project.toml version)'
-        required: false
-        default: ''
+        description: 'Version to register (e.g., 0.1.0, or "patch"/"minor"/"major")'
+        required: true
+        default: '0.1.0'
 
 jobs:
   register:
@@ -17,3 +17,4 @@ jobs:
       - uses: julia-actions/RegisterAction@v0.3.2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          version: ${{ inputs.version }}
