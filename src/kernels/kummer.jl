@@ -6,17 +6,18 @@ Kummer Kernel via spectral F-distribution mixture:
   k(r) = U(α, β, (r/ℓ)^2)
 where U is confluent hypergeometric U function
 """
-struct KummerKernel{M} <: KernelFunctions.Kernel
-    α::Float64
-    β::Float64
-    γ::Float64
+struct KummerKernel{T<:Real,M} <: KernelFunctions.Kernel
+    α::Vector{T}
+    β::Vector{T}
+    γ::Vector{T}
     metric::M
     function KummerKernel(;α::T1, β::T2, γ::T3) where {T1<:Real, T2<:Real, T3<:Real}
         0 < α <= 2 || throw(ArgumentError("α must be in (0,2] for PD"))
         0 < β || throw(ArgumentError("β must be positive"))
         0 < γ || throw(ArgumentError("γ must be positive"))
-        metric = KernelFunctions.Euclidean()        
-        new{typeof(metric)}(Float64(α), Float64(β), Float64(γ), metric)
+        T = promote_type(T1, T2, T3)
+        metric = KernelFunctions.Euclidean()
+        new{T,typeof(metric)}([T(α)], [T(β)], [T(γ)], metric)
     end
 end
 

@@ -1,12 +1,12 @@
-# GeneralizedRFFs.jl
+# GeneralizedRFF.jl
 
-[![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://shu13830.github.io/GeneralizedRFFs.jl/stable/)
-[![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://shu13830.github.io/GeneralizedRFFs.jl/dev/)
-[![Build Status](https://github.com/shu13830/GeneralizedRFFs.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/shu13830/GeneralizedRFFs.jl/actions/workflows/CI.yml?query=branch%3Amain)
+[![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://shu13830.github.io/GeneralizedRFF.jl/stable/)
+[![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://shu13830.github.io/GeneralizedRFF.jl/dev/)
+[![Build Status](https://github.com/shu13830/GeneralizedRFF.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/shu13830/GeneralizedRFF.jl/actions/workflows/CI.yml?query=branch%3Amain)
 
 ## Generalized Random Fourier Features to approximate any positive definite isotropic kernels
 ---
-**GeneralizedRFFs.jl** extends [RandomFourierFeatures.jl](https://github.com/example/RandomFourierFeatures.jl) by providing Random Fourier Feature approximations for a broad class of isotropic kernels beyond the standard RBF. Leveraging spectral mixture representations from Langrené *et al.* (arXiv:2411.02770), this package supports:
+**GeneralizedRFF.jl** extends [RandomFourierFeatures.jl](https://github.com/JuliaGaussianProcesses/RandomFourierFeatures.jl) by providing Random Fourier Feature approximations for a broad class of isotropic kernels beyond the standard RBF. Leveraging spectral mixture representations from Langrené *et al.* (arXiv:2411.02770), this package supports:
 
 * **Generalized Matérn Kernel**
 * **Generalized Cauchy Kernel**
@@ -17,90 +17,157 @@
 
 ## Features
 
-* **One-line integration**<br>Sample feature maps for both RBF and extended kernels via a single API function.
-* **Spectral mixture sampling**<br>Automatic sampling of scale mixtures and stable distributions for accurate kernel approximations.
-* **Compatibility**<br>Works seamlessly with `KernelFunctions.jl` types and the existing RFF infrastructure in `RandomFourierFeatures.jl`.
-* **Lightweight**<br>Minimal dependencies: `Distributions.jl`, `SpecialFunctions.jl`, `RandomFourierFeatures.jl`, `KernelFunctions.jl`.
+* **Unified Spectral Framework**
+  All kernels use the spectral mixture representation from Theorem 1 of Langrené et al. (2024): η = (λR)^(1/α) · S_α
+
+* **Broad Kernel Support**
+  Six families of isotropic kernels beyond the standard RBF, including heavy-tailed and hypergeometric kernels
+
+* **Numerical Stability**
+  - Optimized α = 2 (Gaussian) special case
+  - Log-space computations for Beta and Tricomi kernels
+  - Robust symmetric α-stable sampling
+
+* **Automatic Differentiation Compatible**
+  - Parameters stored as `Vector{T}` for AD compatibility
+  - Full `Functors.jl` integration for gradient-based optimization
+
+* **Seamless Integration**
+  - Works with `KernelFunctions.jl` ecosystem
+  - Compatible with `AbstractGPs.jl` for Gaussian process inference
+  - Extends `RandomFourierFeatures.jl`
+
+* **Well-Tested**
+  Comprehensive test suite covering kernel properties, approximation quality, and edge cases
 
 ## Installation
 
 ```julia
 julia> import Pkg
-julia> Pkg.add(url = "https://github.com/shu13830/GeneralizedRFFs.jl")
+julia> Pkg.add(url = "https://github.com/shu13830/GeneralizedRFF.jl")
 ```
 
 ## Usage
-### Approximate kernel
+
+### Quick Start: Approximate Kernel Values
+
 ```julia
-using Random: MersenneTwister
+using Random
 using KernelFunctions
-using Plots
-using GeneralizedRFFs
+using GeneralizedRFF
 
-# Instantiate an extended kernel
-k = GeneralizedMaternKernel(ℓ=1.0, ν=0.5)
+# Create a Generalized Cauchy kernel
+k = GeneralizedCauchyKernel(1.5, 2.0)
 
-# Prepare RNG and sample RFF basis
+# Sample RFF basis
 rng = MersenneTwister(42)
-φ = sample_generalized_rff_basis(rng, k, input_dims=3, num_features=500)
+basis = sample_generalized_rff_basis(rng, k, 3, 500)  # 3D input, 500 features
 
-# Map data points x, y ∈ ℝ³ to feature space
-x = rand(3); y = rand(3)
-kx = φ(x)
-ky = φ(y)
+# Map data points to feature space
+x = rand(rng, 3)
+y = rand(rng, 3)
+φx = basis(x)
+φy = basis(y)
 
+# Approximate kernel value
+k_approx = dot(φx, φy)
+k_exact = k(x, y)
 
-# Approximate kernel matrix by inner product
-K_approx = dot(kx, ky)
-
-# compute kernel matrix
-K = kernelmatrix(k, x, y)
-
-# compare kernel matrices
-plot(heatmap(K_approx), heatmap(K))
-
+println("Exact: $k_exact, Approx: $k_approx")
 ```
 
-## Approximate Gaussian processes with generalized RFFs
+### Approximate Kernel Matrices
+
 ```julia
-using Random: MersenneTwister
-using KernelFunctions
-using Plots
+using LinearAlgebra
+
+# Generate data points
+X = [rand(rng, 3) for _ in 1:50]
+
+# Compute exact kernel matrix
+K_exact = kernelmatrix(k, X)
+
+# Compute RFF approximation
+K_approx = rff_kernelmatrix(rng, k, X, 500)
+
+# Compare
+println("Relative error: ", norm(K_exact - K_approx) / norm(K_exact))
+```
+
+## Approximate Gaussian Processes with Generalized RFFs
+
+```julia
 using AbstractGPs
 using BayesianLinearRegressors
-using GeneralizedRFFs
+using GeneralizedRFF
 
-# Instantiate an extended kernel
-k = GeneralizedMaternKernel(ℓ=1.0, ν=0.5)
+# Create a GP with a generalized kernel
+k = KummerKernel(α=1.5, β=2.0, γ=1.5)
+f = GP(k)
 
-# Prepare RNG and sample RFF basis
-rng = MersenneTwister(42)
-φ = sample_generalized_rff_basis(rng, k, input_dims=3, num_features=500)
+# Build RFF weight-space approximation
+rng = MersenneTwister(123)
+approx = build_grff_weight_space_approx(rng, 3, 200)  # 3D input, 200 features
+f_approx = approx(f)
 
-# ...
-
+# Use for inference...
 ```
 
 ## API Reference
 
-* `sample_generalized_rff_basis(rng::AbstractRNG, k::Kernel, d::Int, M::Int)`<br>
-  Returns an `RFFBasis` for kernel `k` on `d`‑dimensional inputs with `M` random features.
+### Main Functions
 
-* **Kernel types** (all subtype `KernelFunctions.Kernel`):
+* **`sample_generalized_rff_basis(rng, kernel, input_dims, num_features)`**
+  Sample a Random Fourier Feature basis for any supported kernel.
+  - Returns: `RFFBasis` object compatible with `RandomFourierFeatures.jl`
 
-  * `GeneralizedMaternKernel(ℓ::Float64, ν::Float64)`
-  * `GeneralizedCauchyKernel(ℓ::Float64, β::Float64)`
-  * `ExponentialPowerKernel(ℓ::Float64, p::Float64)`
-  * `BetaKernel(ℓ::Float64, α::Float64, β::Float64)`
-  * `KummerKernel(ℓ::Float64, α::Float64, β::Float64)`
-  * `TricomiKernel(ℓ::Float64, α::Float64, β::Float64)`
+* **`rff_kernelmatrix(rng, kernel, X, num_features)`**
+  Compute approximate kernel matrix using RFF.
+  - `X`: Vector of data points
+  - Returns: Approximate kernel matrix (N × N)
+
+* **`rff_kernelmatrix(basis, X)`**
+  Compute approximate kernel matrix from pre-sampled basis.
+
+### Supported Kernels
+
+All kernels are subtypes of `KernelFunctions.Kernel`:
+
+* **`GeneralizedCauchyKernel(α, β)`**
+  Generalized Cauchy kernel with exponent `α ∈ (0,2]` and tail parameter `β > 0`
+
+* **`KummerKernel(; α, β, γ)`**
+  Kummer confluent hypergeometric kernel
+
+* **`BetaKernel(; α, β, γ)`**
+  Beta kernel with spectral Beta mixture
+
+* **`TricomiKernel(; α, β, γ)`**
+  Tricomi confluent hypergeometric kernel
+
+* **`GammaExponentialKernel(γ)` / `ExponentialPowerKernel` / `SubbotinKernel`**
+  Exponential power kernel: k(r) = exp(-r^γ)
+
+* **`MaternKernel(ν)`** *(from KernelFunctions.jl)*
+  Standard Matérn kernel (extended for generalized RFF sampling)
+
+### Integration with Functors.jl
+
+All kernels are compatible with `Functors.jl` for automatic differentiation and parameter optimization:
+
+```julia
+using Functors
+
+k = GeneralizedCauchyKernel(1.5, 2.0)
+params = Functors.fmap(identity, k)  # Extract parameters
+```
 
 ## Testing
 
 Run the built‑in test suite:
 
 ```shell
-julia> import Pkg; Pkg.test("GeneralizedRFFs")
+julia> import Pkg; Pkg.test("GeneralizedRFF")
 ```
 
 ## Contributing

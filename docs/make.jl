@@ -1,14 +1,14 @@
-using GeneralizedRFFs
+using GeneralizedRFF
 using Documenter
 
-DocMeta.setdocmeta!(GeneralizedRFFs, :DocTestSetup, :(using GeneralizedRFFs); recursive=true)
+DocMeta.setdocmeta!(GeneralizedRFF, :DocTestSetup, :(using GeneralizedRFF); recursive=true)
 
 makedocs(;
-    modules=[GeneralizedRFFs],
+    modules=[GeneralizedRFF],
     authors="Shuichi Miyazawa",
-    sitename="GeneralizedRFFs.jl",
+    sitename="GeneralizedRFF.jl",
     format=Documenter.HTML(;
-        canonical="https://shu13830.github.io/GeneralizedRFFs.jl",
+        canonical="https://shu13830.github.io/GeneralizedRFF.jl",
         edit_link="main",
         assets=String[],
     ),
@@ -18,6 +18,6 @@ makedocs(;
 )
 
 deploydocs(;
-    repo="github.com/shu13830/GeneralizedRFFs.jl",
+    repo="github.com/shu13830/GeneralizedRFF.jl",
     devbranch="main",
 )

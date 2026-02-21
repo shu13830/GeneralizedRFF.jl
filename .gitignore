@@ -4,3 +4,8 @@
 TODO.md
 notebooks/comparison.ipynb
 combined_src.jl
+
+# Internal development documentation (not for public release)
+CLAUDE.md
+IMPLEMENTATION.md
+EXPERIMENTS.md

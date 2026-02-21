@@ -24,6 +24,19 @@ function sample_grff_basis(kernel, input_dims::Integer, num_features=100::Intege
     return sample_grff_basis(Random.GLOBAL_RNG, kernel, input_dims, num_features)
 end
 
+# Public API alias
+const sample_generalized_rff_basis = sample_grff_basis
+
+
+# Helper function to extract lengthscale from kernel
+# Returns 1.0 for kernels without explicit lengthscale
+function get_lengthscale(k::KernelFunctions.Kernel)
+    if hasproperty(k, :ℓ)
+        return getfield(k, :ℓ)
+    else
+        return 1.0  # Default lengthscale
+    end
+end
 
 # -- Main API: sample generalized RFF basis --
 """
@@ -66,11 +79,13 @@ function sample_grff_basis(
     for m in 1:num_features
         R_val = rand(rng, dist_R)             # Sample mixture scale
         S_vec = sample_Sα(rng, α, input_dims) # Sample stable direction
-        ω[:, m] = (λ * R_val)^(1/α) * S_vec    # Compute frequency vector
+        # Compute frequency vector: ω = (λR)^(1/α) · Sα
+        scale_factor = (λ * R_val)^(1/α)
+        ω[:, m] = scale_factor * S_vec
     end
 
-    # Extract the kernel's lengthscale ℓ
-    ℓ = getfield(k, :ℓ)
+    # Extract the kernel's lengthscale ℓ (default 1.0)
+    ℓ = get_lengthscale(k)
 
     # Return the constructed RFF basis
     return RandomFourierFeatures.RFFBasis(

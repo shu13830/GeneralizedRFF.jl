@@ -16,7 +16,7 @@ function spectral_params(k::MaternKernel)
     return (α, λ)
 end
 
-isa_kernel_for_genlrff(::MaternKernel) = k.metric isa KernelFunctions.Euclidean
+isa_kernel_for_genlrff(k::MaternKernel) = k.metric isa KernelFunctions.Euclidean
 
 function spectral_weights(::MaternKernel)
     return 1.0, 1.0
