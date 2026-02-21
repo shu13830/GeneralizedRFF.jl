@@ -1,0 +1,3 @@
+# Mark Jupyter notebooks as documentation for GitHub Linguist
+# This prevents notebooks from dominating language statistics
+*.ipynb linguist-documentation
