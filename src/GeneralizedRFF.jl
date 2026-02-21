@@ -6,7 +6,6 @@ module GeneralizedRFF
 
 using AbstractGPs
 using BayesianLinearRegressors: BayesianLinearRegressor
-using Bijectors
 using RandomFourierFeatures
 using RandomFourierFeatures: BasisFunctionRegressor
 using Distributions
