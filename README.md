@@ -42,6 +42,8 @@
 
 ## Installation
 
+**Requirements:** Julia 1.10
+
 ```julia
 julia> import Pkg
 julia> Pkg.add(url = "https://github.com/shu13830/GeneralizedRFF.jl")
@@ -49,46 +51,26 @@ julia> Pkg.add(url = "https://github.com/shu13830/GeneralizedRFF.jl")
 
 ## Usage
 
-### Quick Start: Approximate Kernel Values
+### Quick Start: Approximate Kernel Matrix
 
 ```julia
 using Random
+using LinearAlgebra
 using KernelFunctions
 using GeneralizedRFF
 
 # Create a Generalized Cauchy kernel
 k = GeneralizedCauchyKernel(1.5, 2.0)
 
-# Sample RFF basis
+# Generate random data points
 rng = MersenneTwister(42)
-basis = sample_generalized_rff_basis(rng, k, 3, 500)  # 3D input, 500 features
-
-# Map data points to feature space
-x = rand(rng, 3)
-y = rand(rng, 3)
-φx = basis(x)
-φy = basis(y)
-
-# Approximate kernel value
-k_approx = dot(φx, φy)
-k_exact = k(x, y)
-
-println("Exact: $k_exact, Approx: $k_approx")
-```
-
-### Approximate Kernel Matrices
-
-```julia
-using LinearAlgebra
-
-# Generate data points
-X = [rand(rng, 3) for _ in 1:50]
+X = [rand(rng, 3) for _ in 1:50]  # 50 points in 3D
 
 # Compute exact kernel matrix
 K_exact = kernelmatrix(k, X)
 
 # Compute RFF approximation
-K_approx = rff_kernelmatrix(rng, k, X, 500)
+K_approx = rff_kernelmatrix(rng, k, X, 500)  # 500 random features
 
 # Compare
 println("Relative error: ", norm(K_exact - K_approx) / norm(K_exact))
@@ -97,8 +79,9 @@ println("Relative error: ", norm(K_exact - K_approx) / norm(K_exact))
 ## Approximate Gaussian Processes with Generalized RFFs
 
 ```julia
+using Random
 using AbstractGPs
-using BayesianLinearRegressors
+using KernelFunctions: ColVecs
 using GeneralizedRFF
 
 # Create a GP with a generalized kernel
@@ -107,10 +90,13 @@ f = GP(k)
 
 # Build RFF weight-space approximation
 rng = MersenneTwister(123)
-approx = build_grff_weight_space_approx(rng, 3, 200)  # 3D input, 200 features
+approx = GeneralizedRFF.build_grff_weight_space_approx(rng, 3, 200)  # 3D input, 200 features
 f_approx = approx(f)
 
-# Use for inference...
+# Use for inference with training data (wrapped in ColVecs)
+X_train = ColVecs(randn(3, 20))  # 20 points in 3D
+y_train = sin.(X_train.X[1, :]) + 0.1 * randn(20)
+posterior_approx = posterior(f_approx(X_train, 0.1), y_train)
 ```
 
 ## API Reference
@@ -145,11 +131,11 @@ All kernels are subtypes of `KernelFunctions.Kernel`:
 * **`TricomiKernel(; α, β, γ)`**
   Tricomi confluent hypergeometric kernel
 
-* **`GammaExponentialKernel(γ)` / `ExponentialPowerKernel` / `SubbotinKernel`**
-  Exponential power kernel: k(r) = exp(-r^γ)
+* **`ExponentialPowerKernel(α)` / `GeneralizedGaussianKernel(α)` / `SubbotinKernel(α)`**
+  Exponential power kernel: k(r) = exp(-r^α), α ∈ (0, 2]
 
 * **`MaternKernel(ν)`** *(from KernelFunctions.jl)*
-  Standard Matérn kernel (extended for generalized RFF sampling)
+  Standard Matérn kernel (supported for generalized RFF sampling)
 
 ### Integration with Functors.jl
 
