@@ -14,7 +14,7 @@ function build_grff_weight_space_approx(
         f.mean isa AbstractGPs.ZeroMean ||
             error("The GP to be approximated must have zero mean")
         ϕ = sample_grff_basis(rng, f.kernel, input_dims, num_features)
-        blr = BayesianLinearRegressor(Zeros(num_features), Diagonal(Ones(num_features)))
+        blr = BayesianLinearRegressor(zeros(num_features), Diagonal(ones(num_features)))
         return BasisFunctionRegressor(blr, ϕ)
     end
     return grff_weight_space_approx
@@ -37,6 +37,9 @@ function get_lengthscale(k::KernelFunctions.Kernel)
         return 1.0  # Default lengthscale
     end
 end
+
+# Default fallback for unsupported kernels
+isa_kernel_for_genlrff(::KernelFunctions.Kernel) = false
 
 # -- Main API: sample generalized RFF basis --
 """
@@ -87,10 +90,21 @@ function sample_grff_basis(
     # Extract the kernel's lengthscale ℓ (default 1.0)
     ℓ = get_lengthscale(k)
 
+    # Compute proper weights for RFF
+    # inner_weights scales the input (lengthscale)
+    # outer_weights scales the output (1/√M for proper normalization)
+    inner_weights = 1.0 / ℓ
+    outer_weights = 1.0 / sqrt(num_features)
+
+    # Create a dummy sample_params closure (not used for pre-sampled basis)
+    sample_params = () -> nothing
+
     # Return the constructed RFF basis
     return RandomFourierFeatures.RFFBasis(
-        inner=ℓ,
-        outer_scaled=λ,
+        inner_weights,
+        outer_weights,
         ω,
-        τ)
+        τ,
+        sample_params
+    )
 end

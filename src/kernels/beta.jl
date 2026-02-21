@@ -10,7 +10,7 @@ k(r) = B(α, β)\\,U\\bigl(α,\\,1-β,\\,(r/ℓ)^2\\bigr)
 ```
 where U is Tricomi's confluent hypergeometric function.
 """
-struct BetaKernel{T<:Real,M} <: KernelFunctions.Kernel
+struct BetaKernel{T<:Real,M} <: KernelFunctions.SimpleKernel
     α::Vector{T}    # exponent parameter (0 < α <= 2)
     β::Vector{T}    # 1st parameter of Beta distribution
     γ::Vector{T}    # 2nd parameter of Beta distribution
@@ -43,15 +43,30 @@ end
 
 
 """
-Spectral mixing distribution R for a Beta kernel: 
+    BetaExponentialDistribution(β, γ)
+
+Distribution for R = -log(X) where X ~ Beta(β, γ).
+Used as the spectral mixing distribution for Beta kernel.
+"""
+struct BetaExponentialDistribution{T<:Real} <: Distributions.ContinuousUnivariateDistribution
+    β::T
+    γ::T
+end
+
+function Base.rand(rng::Random.AbstractRNG, d::BetaExponentialDistribution)
+    x = rand(rng, Beta(d.β, d.γ))
+    return -log(x)
+end
+
+"""
+Spectral mixing distribution R for a Beta kernel:
 R ∼ Beta-exponential(β, γ)
 where -log(R) follows a Beta distribution with parameters β and γ.
 """
 function spectral_mixing_distribution(k::BetaKernel)
     β = only(k.β)
     γ = only(k.γ)
-    neglog_bij = Bijectors.Chain(Bijectors.log, Bijectors.Scale(-1.0))
-    return transformed(Beta(β, γ), neglog_bij)
+    return BetaExponentialDistribution(β, γ)
 end
 
 """Spectral parameters (α, λ=1) for a Beta kernel"""

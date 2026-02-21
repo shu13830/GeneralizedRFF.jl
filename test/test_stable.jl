@@ -51,7 +51,8 @@ using Statistics
 
     @testset "Numerical stability for α ≈ 2" begin
         # Should not produce NaN or Inf
-        α_values = [1.99, 1.999, 2.0, 2.00001]
+        # Note: α must be in (0, 2] for positive definiteness
+        α_values = [1.9, 1.99, 1.999, 2.0]
         d = 5
 
         for α in α_values

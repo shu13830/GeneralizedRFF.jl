@@ -8,15 +8,14 @@ using Functors
 # Functors.jl integration for automatic differentiation
 # -----------------------------------------------------------------------------
 
-"""
-Make kernels compatible with Functors.jl for parameter optimization.
-This allows packages like Flux.jl and Optimisers.jl to traverse and update
-kernel parameters automatically.
-"""
-Functors.@functor GeneralizedCauchyKernel
-Functors.@functor KummerKernel
-Functors.@functor BetaKernel
-Functors.@functor TricomiKernel
+# Make kernels compatible with Functors.jl for parameter optimization.
+# This allows packages like Flux.jl and Optimisers.jl to traverse and update
+# kernel parameters automatically.
+# We specify which fields are trainable (excluding metric which is fixed).
+Functors.@functor GeneralizedCauchyKernel (α, β)
+Functors.@functor KummerKernel (α, β, γ)
+Functors.@functor BetaKernel (α, β, γ)
+Functors.@functor TricomiKernel (α, β, γ)
 
 # -----------------------------------------------------------------------------
 # Utility functions for RFF-based kernel approximation
@@ -56,11 +55,19 @@ K_exact = kernelmatrix(k, X)
 ```
 """
 function rff_kernelmatrix(basis::RandomFourierFeatures.RFFBasis, X::AbstractVector)
-    N = length(X)
-    Φ = zeros(2 * basis.M, N)
+    # Stack all points into a matrix and wrap with ColVecs
+    X_mat = hcat(X...)
+    X_colvecs = KernelFunctions.ColVecs(X_mat)
 
-    for (i, x) in enumerate(X)
-        Φ[:, i] = basis(x)
+    # Get all features at once
+    features = basis(X_colvecs)
+
+    # Stack features into a matrix
+    N = length(X)
+    M = length(features[1])  # Feature dimension
+    Φ = zeros(M, N)
+    for i in 1:N
+        Φ[:, i] = features[i]
     end
 
     return Φ' * Φ

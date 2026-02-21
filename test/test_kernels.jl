@@ -91,13 +91,20 @@ end
 end
 
 @testset "Special Cases" begin
-    @testset "α = 2 (should approach Gaussian)" begin
-        # ExponentialPower with α=2 should be Gaussian
-        k_ep = GammaExponentialKernel(γ=[2.0])
-        k_rbf = SqExponentialKernel()
+    @testset "GammaExponentialKernel basic properties" begin
+        # GammaExponentialKernel(γ=2) gives exp(-r^2), which differs from
+        # SqExponentialKernel's exp(-r²/2) by a factor of 2 in the exponent.
+        # Here we just verify basic kernel properties.
+        k_ep = GeneralizedRFF.GammaExponentialKernel(γ=2.0)
 
         x, y = [1.0], [2.0]
-        # They might have different normalizations, so check relative behavior
-        @test k_ep(x, x) / k_ep(x, y) ≈ k_rbf(x, x) / k_rbf(x, y) rtol=0.1
+        # Kernel should be 1 at origin
+        @test k_ep(x, x) ≈ 1.0
+        # Kernel should be positive
+        @test k_ep(x, y) > 0
+        # Kernel should decay with distance
+        @test k_ep(x, x) > k_ep(x, y)
+        # For γ=2, k(x,y) = exp(-|x-y|²) = exp(-1) when |x-y|=1
+        @test k_ep(x, y) ≈ exp(-1.0) rtol=1e-10
     end
 end

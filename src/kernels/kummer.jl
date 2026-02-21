@@ -6,7 +6,7 @@ Kummer Kernel via spectral F-distribution mixture:
   k(r) = U(α, β, (r/ℓ)^2)
 where U is confluent hypergeometric U function
 """
-struct KummerKernel{T<:Real,M} <: KernelFunctions.Kernel
+struct KummerKernel{T<:Real,M} <: KernelFunctions.SimpleKernel
     α::Vector{T}
     β::Vector{T}
     γ::Vector{T}

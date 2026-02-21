@@ -6,7 +6,7 @@ Tricomi Kernel via Beta-exponential mixture:
     k(r) = U(α, α - β + 1, (r/ℓ)^2)
 where U is Tricomi's confluent hypergeometric function
 """
-struct TricomiKernel{T<:Real,M} <: KernelFunctions.Kernel
+struct TricomiKernel{T<:Real,M} <: KernelFunctions.SimpleKernel
     α::Vector{T}
     β::Vector{T}
     γ::Vector{T}
@@ -25,6 +25,12 @@ function KernelFunctions.kappa(k::TricomiKernel, d::Real)
     α = only(k.α)
     β = only(k.β)
     γ = only(k.γ)
+
+    # Special case: at origin, kernel should return 1
+    if d ≈ 0
+        return one(d)
+    end
+
     # Use loggamma for numerical stability with large parameters
     log_gamma_ratio = loggamma(β + γ) - loggamma(γ)
     gamma_ratio = exp(log_gamma_ratio)

@@ -10,11 +10,10 @@ using Bijectors
 using RandomFourierFeatures
 using RandomFourierFeatures: BasisFunctionRegressor
 using Distributions
-using FillArrays: Zeros, Ones
 using KernelFunctions
 using Random, LinearAlgebra
 using SpecialFunctions: besselk, gamma, beta, loggamma, logbeta
-using HypergeometricFunctions: U, M
+import HypergeometricFunctions
 
 include("genl_random_fourier_features.jl")
 include("symalphastable.jl")
@@ -28,6 +27,8 @@ include("compat.jl")
 
 # Export public API
 export sample_generalized_rff_basis, rff_kernelmatrix
+# Note: GammaExponentialKernel not exported to avoid conflict with KernelFunctions.jl
+# Use GeneralizedRFF.GammaExponentialKernel if needed
 export SubbotinKernel, GeneralizedGaussianKernel, ExponentialPowerKernel,
     GeneralizedCauchyKernel, BetaKernel, KummerKernel, TricomiKernel
 

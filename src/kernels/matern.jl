@@ -16,7 +16,8 @@ function spectral_params(k::MaternKernel)
     return (α, λ)
 end
 
-isa_kernel_for_genlrff(k::MaternKernel) = k.metric isa KernelFunctions.Euclidean
+# MaternKernel from KernelFunctions.jl uses Euclidean distance by default
+isa_kernel_for_genlrff(::MaternKernel) = true
 
 function spectral_weights(::MaternKernel)
     return 1.0, 1.0

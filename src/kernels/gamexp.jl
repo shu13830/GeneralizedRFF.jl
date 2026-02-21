@@ -27,7 +27,7 @@ This is also known as Exponential Power, Generalized Gaussian, or Subbotin Kerne
 # Note
 This kernel is positive definite for `0 < γ ≤ 2`.
 """
-struct GammaExponentialKernel{T<:Real,M} <: KernelFunctions.Kernel
+struct GammaExponentialKernel{T<:Real,M} <: KernelFunctions.SimpleKernel
     γ::Vector{T}    # exponent parameter (0 < γ ≤ 2)
     metric::M
     function GammaExponentialKernel(; γ::T, metric=KernelFunctions.Euclidean()) where {T<:Real}

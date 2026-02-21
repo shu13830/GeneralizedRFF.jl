@@ -16,7 +16,7 @@ parameters for generalized RFF approximation: (R ~ Gamma(β, 1), λ = 1/(2β), �
 When ``β = 1``, it reduces to the Cauchy kernel.
 When ``β → ∞``, it approaches the Exponential Power Kernel.
 """
-struct GeneralizedCauchyKernel{T<:Real,M} <: KernelFunctions.Kernel
+struct GeneralizedCauchyKernel{T<:Real,M} <: KernelFunctions.SimpleKernel
     α::Vector{T}    # exponent parameter
     β::Vector{T}    # tail parameter
     metric::M
