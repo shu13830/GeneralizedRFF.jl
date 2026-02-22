@@ -22,7 +22,7 @@ Functors.@functor TricomiKernel (α, β, γ)
 # -----------------------------------------------------------------------------
 
 """
-    rff_kernelmatrix(basis::RandomFourierFeatures.RFFBasis, X::AbstractVector)
+    rff_kernelmatrix(basis::RFFBasis, X::AbstractVector)
 
 Compute approximate kernel matrix using Random Fourier Features.
 
@@ -54,7 +54,7 @@ K_approx = rff_kernelmatrix(basis, X)
 K_exact = kernelmatrix(k, X)
 ```
 """
-function rff_kernelmatrix(basis::RandomFourierFeatures.RFFBasis, X::AbstractVector)
+function rff_kernelmatrix(basis::RFFBasis, X::AbstractVector)
     # Stack all points into a matrix and wrap with ColVecs
     X_mat = hcat(X...)
     X_colvecs = KernelFunctions.ColVecs(X_mat)

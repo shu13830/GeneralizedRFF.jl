@@ -1,8 +1,8 @@
 using Test
-using RandomFourierFeatures
 using KernelFunctions
 using KernelFunctions: ColVecs
 using GeneralizedRFF
+using GeneralizedRFF: RFFBasis
 using LinearAlgebra
 using Random
 using Statistics
@@ -32,13 +32,12 @@ global_rng = MersenneTwister(1234)
     # Test RBF fallback behavior
     @testset "RBF Fallback" begin
         k = SqExponentialKernel()
-        # Using core library vs generalized
-        φ1 = sample_rff_basis(global_rng, k, 3, M)
-        φ2 = sample_generalized_rff_basis(global_rng, k, 3, M)
-        @test typeof(φ1) == typeof(φ2)
-        # Both should produce valid RFF bases with same dimensions
-        @test size(φ1.ω) == size(φ2.ω)
-        @test length(φ1.τ) == length(φ2.τ)
+        φ = sample_generalized_rff_basis(global_rng, k, 3, M)
+        @test φ isa RFFBasis
+        @test size(φ.ω) == (3, M)
+        @test length(φ.τ) == M
+        @test all(isfinite.(φ.ω))
+        @test all(isfinite.(φ.τ))
     end
 
     # Test new kernels correctness
@@ -65,7 +64,7 @@ global_rng = MersenneTwister(1234)
                KummerKernel(α=1.0, β=2.0, γ=0.5),
                TricomiKernel(α=1.0, β=1.5, γ=0.7) ]
         for k in ks
-            @test sample_generalized_rff_basis(global_rng, k, 2, 100) isa RandomFourierFeatures.RFFBasis
+            @test sample_generalized_rff_basis(global_rng, k, 2, 100) isa RFFBasis
         end
     end
 

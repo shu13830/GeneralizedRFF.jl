@@ -6,7 +6,7 @@
 
 ## Generalized Random Fourier Features to approximate any positive definite isotropic kernels
 ---
-**GeneralizedRFF.jl** extends [RandomFourierFeatures.jl](https://github.com/JuliaGaussianProcesses/RandomFourierFeatures.jl) by providing Random Fourier Feature approximations for a broad class of isotropic kernels beyond the standard RBF. Leveraging spectral mixture representations from Langrené *et al.* (arXiv:2411.02770), this package supports:
+**GeneralizedRFF.jl** provides Random Fourier Feature approximations for a broad class of isotropic kernels beyond the standard RBF. Leveraging spectral mixture representations from Langrené *et al.* (arXiv:2411.02770), this package supports:
 
 * **Generalized Matérn Kernel**
 * **Generalized Cauchy Kernel**
@@ -35,14 +35,12 @@
 * **Seamless Integration**
   - Works with `KernelFunctions.jl` ecosystem
   - Compatible with `AbstractGPs.jl` for Gaussian process inference
-  - Extends `RandomFourierFeatures.jl`
-
 * **Well-Tested**
   Comprehensive test suite covering kernel properties, approximation quality, and edge cases
 
 ## Installation
 
-**Requirements:** Julia 1.10
+**Requirements:** Julia >= 1.10
 
 ```julia
 julia> import Pkg
@@ -105,7 +103,7 @@ posterior_approx = posterior(f_approx(X_train, 0.1), y_train)
 
 * **`sample_generalized_rff_basis(rng, kernel, input_dims, num_features)`**
   Sample a Random Fourier Feature basis for any supported kernel.
-  - Returns: `RFFBasis` object compatible with `RandomFourierFeatures.jl`
+  - Returns: `RFFBasis` object representing the random feature map
 
 * **`rff_kernelmatrix(rng, kernel, X, num_features)`**
   Compute approximate kernel matrix using RFF.

@@ -10,7 +10,7 @@ Based on the spectral mixture representation from Langrené, Warin & Gruet (2024
 
 ## Overview
 
-This package extends [RandomFourierFeatures.jl](https://github.com/JuliaGaussianProcesses/RandomFourierFeatures.jl) with support for:
+This package provides generalized Random Fourier Feature approximations for:
 
 - **Generalized Cauchy Kernel**
 - **Exponential Power (Generalized Gaussian) Kernel**

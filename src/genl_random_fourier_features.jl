@@ -52,7 +52,7 @@ Sample an RFF basis for any supported isotropic kernel.
 - `num_features`: Number of random features M
 
 # Returns
-A `RandomFourierFeatures.RFFBasis` object representing the random feature map.
+An `RFFBasis` object representing the random feature map.
 """
 function sample_grff_basis(
     rng::AbstractRNG,
@@ -60,9 +60,15 @@ function sample_grff_basis(
     input_dims::Int,
     num_features::Int
 )
-    # If Gaussian (SqExponential), defer to built-in implementation
+    # If Gaussian (SqExponential), use standard RFF sampling
+    # SqExponentialKernel: k(r) = exp(-r²/2), spectral distribution is N(0, I)
     if k isa KernelFunctions.SqExponentialKernel
-        return RandomFourierFeatures.sample_rff_basis(rng, k, input_dims, num_features)
+        ω = randn(rng, input_dims, num_features)
+        τ = 2π * rand(rng, num_features)
+        inner_weights = 1.0
+        outer_weights = sqrt(2.0 / num_features)
+        sample_params = () -> (randn(input_dims, num_features), 2π * rand(num_features))
+        return RFFBasis(inner_weights, outer_weights, ω, τ, sample_params)
     end
 
     if !isa_kernel_for_genlrff(k)
@@ -101,7 +107,7 @@ function sample_grff_basis(
     sample_params = () -> nothing
 
     # Return the constructed RFF basis
-    return RandomFourierFeatures.RFFBasis(
+    return RFFBasis(
         inner_weights,
         outer_weights,
         ω,

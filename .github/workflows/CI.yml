@@ -24,8 +24,7 @@ jobs:
       matrix:
         version:
           - '1.10'
-          # Note: Julia 1.11+ not supported due to RandomFourierFeatures dependency
-          # requiring FillArrays 0.12.x which is incompatible with Julia 1.11+
+          - '1'
         os:
           - ubuntu-latest
         arch:
