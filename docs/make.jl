@@ -1,14 +1,14 @@
-using GeneralizedRFF
+using GeneralizedRandomFourierFeatures
 using Documenter
 
-DocMeta.setdocmeta!(GeneralizedRFF, :DocTestSetup, :(using GeneralizedRFF); recursive=true)
+DocMeta.setdocmeta!(GeneralizedRandomFourierFeatures, :DocTestSetup, :(using GeneralizedRandomFourierFeatures); recursive=true)
 
 makedocs(;
-    modules=[GeneralizedRFF],
+    modules=[GeneralizedRandomFourierFeatures],
     authors="Shuichi Miyazawa",
-    sitename="GeneralizedRFF.jl",
+    sitename="GeneralizedRandomFourierFeatures.jl",
     format=Documenter.HTML(;
-        canonical="https://shu13830.github.io/GeneralizedRFF.jl",
+        canonical="https://shu13830.github.io/GeneralizedRandomFourierFeatures.jl",
         edit_link="main",
         assets=String[],
     ),
@@ -18,6 +18,6 @@ makedocs(;
 )
 
 deploydocs(;
-    repo="github.com/shu13830/GeneralizedRFF.jl",
+    repo="github.com/shu13830/GeneralizedRandomFourierFeatures.jl",
     devbranch="main",
 )

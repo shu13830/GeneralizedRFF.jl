@@ -1,12 +1,12 @@
-# GeneralizedRFF.jl
+# GeneralizedRandomFourierFeatures.jl
 
-[![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://shu13830.github.io/GeneralizedRFF.jl/stable/)
-[![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://shu13830.github.io/GeneralizedRFF.jl/dev/)
-[![Build Status](https://github.com/shu13830/GeneralizedRFF.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/shu13830/GeneralizedRFF.jl/actions/workflows/CI.yml?query=branch%3Amain)
+[![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://shu13830.github.io/GeneralizedRandomFourierFeatures.jl/stable/)
+[![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://shu13830.github.io/GeneralizedRandomFourierFeatures.jl/dev/)
+[![Build Status](https://github.com/shu13830/GeneralizedRandomFourierFeatures.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/shu13830/GeneralizedRandomFourierFeatures.jl/actions/workflows/CI.yml?query=branch%3Amain)
 
 ## Generalized Random Fourier Features to approximate any positive definite isotropic kernels
 ---
-**GeneralizedRFF.jl** provides Random Fourier Feature approximations for a broad class of isotropic kernels beyond the standard RBF. Leveraging spectral mixture representations from Langrené *et al.* (arXiv:2411.02770), this package supports:
+**GeneralizedRandomFourierFeatures.jl** provides Random Fourier Feature approximations for a broad class of isotropic kernels beyond the standard RBF. Leveraging spectral mixture representations from Langrené *et al.* (arXiv:2411.02770), this package supports:
 
 * **Generalized Matérn Kernel**
 * **Generalized Cauchy Kernel**
@@ -44,7 +44,7 @@
 
 ```julia
 julia> import Pkg
-julia> Pkg.add(url = "https://github.com/shu13830/GeneralizedRFF.jl")
+julia> Pkg.add(url = "https://github.com/shu13830/GeneralizedRandomFourierFeatures.jl")
 ```
 
 ## Usage
@@ -55,7 +55,7 @@ julia> Pkg.add(url = "https://github.com/shu13830/GeneralizedRFF.jl")
 using Random
 using LinearAlgebra
 using KernelFunctions
-using GeneralizedRFF
+using GeneralizedRandomFourierFeatures
 
 # Create a Generalized Cauchy kernel
 k = GeneralizedCauchyKernel(1.5, 2.0)
@@ -80,7 +80,7 @@ println("Relative error: ", norm(K_exact - K_approx) / norm(K_exact))
 using Random
 using AbstractGPs
 using KernelFunctions: ColVecs
-using GeneralizedRFF
+using GeneralizedRandomFourierFeatures
 
 # Create a GP with a generalized kernel
 k = KummerKernel(α=1.5, β=2.0, γ=1.5)
@@ -88,7 +88,7 @@ f = GP(k)
 
 # Build RFF weight-space approximation
 rng = MersenneTwister(123)
-approx = GeneralizedRFF.build_grff_weight_space_approx(rng, 3, 200)  # 3D input, 200 features
+approx = GeneralizedRandomFourierFeatures.build_grff_weight_space_approx(rng, 3, 200)  # 3D input, 200 features
 f_approx = approx(f)
 
 # Use for inference with training data (wrapped in ColVecs)
@@ -151,7 +151,7 @@ params = Functors.fmap(identity, k)  # Extract parameters
 Run the built‑in test suite:
 
 ```shell
-julia> import Pkg; Pkg.test("GeneralizedRFF")
+julia> import Pkg; Pkg.test("GeneralizedRandomFourierFeatures")
 ```
 
 ## Contributing

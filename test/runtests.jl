@@ -1,8 +1,8 @@
 using Test
 using KernelFunctions
 using KernelFunctions: ColVecs
-using GeneralizedRFF
-using GeneralizedRFF: RFFBasis
+using GeneralizedRandomFourierFeatures
+using GeneralizedRandomFourierFeatures: RFFBasis
 using LinearAlgebra
 using Random
 using Statistics
@@ -10,7 +10,7 @@ using Statistics
 # Set random seed for reproducibility
 global_rng = MersenneTwister(1234)
 
-@testset "GeneralizedRFF.jl" begin
+@testset "GeneralizedRandomFourierFeatures.jl" begin
     # Define small input data for testing
     X = [rand(global_rng, 3) for _ in 1:5]
     Y = [rand(global_rng, 3) for _ in 1:5]
@@ -45,7 +45,7 @@ global_rng = MersenneTwister(1234)
     # Using larger tolerance as this is a sanity check, not a precision test
     @testset "Extended Kernels" begin
         kernels = [ GeneralizedCauchyKernel(1.2, 1.0),
-                    GeneralizedRFF.GammaExponentialKernel(γ=1.5) ]
+                    GeneralizedRandomFourierFeatures.GammaExponentialKernel(γ=1.5) ]
         for k in kernels
             @testset "$(typeof(k))" begin
                 # Exact kernel value between two points

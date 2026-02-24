@@ -1,5 +1,5 @@
 using Test
-using GeneralizedRFF
+using GeneralizedRandomFourierFeatures
 using KernelFunctions
 using KernelFunctions: ColVecs
 using Random

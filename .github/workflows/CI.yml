@@ -66,6 +66,6 @@ jobs:
         shell: julia --project=docs --color=yes {0}
         run: |
           using Documenter: DocMeta, doctest
-          using GeneralizedRFF
-          DocMeta.setdocmeta!(GeneralizedRFF, :DocTestSetup, :(using GeneralizedRFF); recursive=true)
-          doctest(GeneralizedRFF)
+          using GeneralizedRandomFourierFeatures
+          DocMeta.setdocmeta!(GeneralizedRandomFourierFeatures, :DocTestSetup, :(using GeneralizedRandomFourierFeatures); recursive=true)
+          doctest(GeneralizedRandomFourierFeatures)

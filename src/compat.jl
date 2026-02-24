@@ -38,7 +38,7 @@ the approximate kernel matrix K̂ where K̂[i,j] ≈ k(X[i], X[j]).
 
 # Example
 ```julia
-using GeneralizedRFF, KernelFunctions
+using GeneralizedRandomFourierFeatures, KernelFunctions
 
 # Create kernel and sample RFF basis
 k = GeneralizedCauchyKernel(1.5, 2.0)
@@ -89,7 +89,7 @@ Convenience function to sample RFF basis and compute kernel matrix in one call.
 
 # Example
 ```julia
-using GeneralizedRFF, Random
+using GeneralizedRandomFourierFeatures, Random
 
 rng = MersenneTwister(1234)
 k = GeneralizedCauchyKernel(1.5, 2.0)

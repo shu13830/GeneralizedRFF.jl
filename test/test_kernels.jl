@@ -1,5 +1,5 @@
 using Test
-using GeneralizedRFF
+using GeneralizedRandomFourierFeatures
 using KernelFunctions
 using Random
 using LinearAlgebra
@@ -95,7 +95,7 @@ end
         # GammaExponentialKernel(γ=2) gives exp(-r^2), which differs from
         # SqExponentialKernel's exp(-r²/2) by a factor of 2 in the exponent.
         # Here we just verify basic kernel properties.
-        k_ep = GeneralizedRFF.GammaExponentialKernel(γ=2.0)
+        k_ep = GeneralizedRandomFourierFeatures.GammaExponentialKernel(γ=2.0)
 
         x, y = [1.0], [2.0]
         # Kernel should be 1 at origin

@@ -3,7 +3,7 @@
 # Project root directory and source directory
 PROJECT_DIR="$(dirname "$0")"
 SRC_DIR="$PROJECT_DIR/src"
-PACKAGE_FILE="$PROJECT_DIR/src/GeneralizedRFFs.jl"
+PACKAGE_FILE="$PROJECT_DIR/src/GeneralizedRandomFourierFeatures.jl"
 COMBINE_FILE="$PROJECT_DIR/combined_src.jl"
 
 echo "# Generated combined_src.jl" > "$COMBINE_FILE"

@@ -4,7 +4,7 @@
 #
 # Reference: EXPERIMENTS.md, Experiment 1
 
-using GeneralizedRFF
+using GeneralizedRandomFourierFeatures
 using KernelFunctions
 using Random
 using LinearAlgebra

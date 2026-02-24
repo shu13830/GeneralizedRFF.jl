@@ -1,4 +1,4 @@
-name = "GeneralizedRFF"
+name = "GeneralizedRandomFourierFeatures"
 uuid = "950ae3bb-d4bf-4db0-8138-3e38a2bc7c29"
 authors = ["Shuichi Miyazawa"]
 version = "0.1.0"

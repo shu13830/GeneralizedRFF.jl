@@ -1,8 +1,8 @@
 ```@meta
-CurrentModule = GeneralizedRFF
+CurrentModule = GeneralizedRandomFourierFeatures
 ```
 
-# GeneralizedRFF.jl
+# GeneralizedRandomFourierFeatures.jl
 
 A Julia package for generalized Random Fourier Features supporting a broad class of isotropic kernels.
 
@@ -23,13 +23,13 @@ This package provides generalized Random Fourier Feature approximations for:
 
 ```julia
 using Pkg
-Pkg.add(url="https://github.com/shu13830/GeneralizedRFF.jl")
+Pkg.add(url="https://github.com/shu13830/GeneralizedRandomFourierFeatures.jl")
 ```
 
 ## Quick Start
 
 ```julia
-using GeneralizedRFF, Random, KernelFunctions
+using GeneralizedRandomFourierFeatures, Random, KernelFunctions
 
 # Create kernel and sample RFF basis
 k = GeneralizedCauchyKernel(1.5, 2.0)
@@ -48,5 +48,5 @@ k_exact = k(x, y)
 ```
 
 ```@autodocs
-Modules = [GeneralizedRFF]
+Modules = [GeneralizedRandomFourierFeatures]
 ```

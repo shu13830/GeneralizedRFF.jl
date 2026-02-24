@@ -1,5 +1,5 @@
 using Test
-using GeneralizedRFF
+using GeneralizedRandomFourierFeatures
 using Random
 using Statistics
 
@@ -14,7 +14,7 @@ using Statistics
 
         samples = zeros(n_samples, d)
         for i in 1:n_samples
-            samples[i, :] = GeneralizedRFF.sample_Sα(rng, α, d)
+            samples[i, :] = GeneralizedRandomFourierFeatures.sample_Sα(rng, α, d)
         end
 
         # Expected: mean ≈ 0, variance ≈ 2
@@ -32,7 +32,7 @@ using Statistics
         d = 1
         n_samples = 1000
 
-        samples = [GeneralizedRFF.sample_Sα(rng, α, d)[1] for _ in 1:n_samples]
+        samples = [GeneralizedRandomFourierFeatures.sample_Sα(rng, α, d)[1] for _ in 1:n_samples]
 
         # Check median is close to 0
         @test abs(median(samples)) < 0.5
@@ -44,7 +44,7 @@ using Statistics
     @testset "Output dimension" begin
         α = 1.5
         for d in [1, 5, 10]
-            s = GeneralizedRFF.sample_Sα(rng, α, d)
+            s = GeneralizedRandomFourierFeatures.sample_Sα(rng, α, d)
             @test length(s) == d
         end
     end
@@ -56,7 +56,7 @@ using Statistics
         d = 5
 
         for α in α_values
-            s = GeneralizedRFF.sample_Sα(rng, α, d)
+            s = GeneralizedRandomFourierFeatures.sample_Sα(rng, α, d)
             @test all(isfinite.(s))
         end
     end
@@ -67,7 +67,7 @@ using Statistics
         n_samples = 1000
 
         function sample_moments(α)
-            samples = [GeneralizedRFF.sample_Sα(rng, α, d) for _ in 1:n_samples]
+            samples = [GeneralizedRandomFourierFeatures.sample_Sα(rng, α, d) for _ in 1:n_samples]
             # Use robust statistics
             mads = [median(abs.(s .- median(s))) for s in samples]
             return median(mads)
